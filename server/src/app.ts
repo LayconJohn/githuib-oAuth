@@ -5,12 +5,14 @@ import { get } from "lodash";
 import cookieParser from "cookie-parser";
 import axios from "axios";
 import cors from "cors";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 
 app.use(cookieParser());
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: process.env.URL_ORIGIN,
   credentials: true
 }))
 app.use(express.json())
@@ -50,10 +52,10 @@ export interface IGithubUser {
     updated_at:          Date;
 }
 
-const GITHUB_CLIENT_ID = "b3b407396a60d9eda39d";
-const GITHUB_CLIENT_SECRET = "6a970e459465b11c9b27a2163503e494f01b658f";
-const JWT_SECRET = "JubileuEstaEsquisitoHoje";
-const COOKIE_NAME = 'github-jwt';
+const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET ?? '';
+const COOKIE_NAME = process.env.COOKIE_NAME ?? '';
 
 async function getGithubUser({ code }: {code: string}): Promise<IGithubUser> {
    const githubToken = await axios.post(`https://github.com/login/oauth/access_token?client_id=${GITHUB_CLIENT_ID}&client_secret=${GITHUB_CLIENT_SECRET}&code=${code}`)
@@ -94,7 +96,7 @@ app.get('/api/auth/github', async (req: Request, res: Response) => {
     domain: 'localhost'
   })
 
-  res.redirect(`http://localhost:3000${path}`);
+  res.redirect(`${process.env.URL_ORIGIN}${path}`);
 });
 
 app.get("/api/me", (req: Request, res: Response) => {
@@ -110,4 +112,4 @@ app.get("/api/me", (req: Request, res: Response) => {
   }
 });
 
-app.listen(4000, () => console.log("Running on 4000..."))
+app.listen(process.env.PORT, () => console.log(`Running on ${process.env.PORT}...`))
