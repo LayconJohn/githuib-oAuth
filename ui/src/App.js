@@ -4,8 +4,8 @@ import { CgHello } from "react-icons/cg";
 import "./reset.css"
 import "./App.css";
 
-const GITHUB_CLIENT_ID = "b3b407396a60d9eda39d";
-const gitHubRedirectURL = "http://localhost:4000/api/auth/github";
+const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+const gitHubRedirectURL = process.env.GITHUB_REDIRECT_URL;
 const path = '/';
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
   useEffect(() => {
 
     (async function() {
-      axios.get("http://localhost:4000/api/me", {
+      axios.get(`${process.env.SERVER_URL}/api/me`, {
         withCredentials: true
       })
         .then((res) => {
